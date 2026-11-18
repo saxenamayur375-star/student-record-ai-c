@@ -1,11 +1,19 @@
 /*
+ * ============================================================================
  * Project Title : AI-Assisted Student Record and Result Management System
  * Course Name   : Programming in C (PRC1001)
- * Program       : B.Tech CSE (Semester I)
+ * Program       : B.Tech Computer Science and Engineering (Semester I)
+ * Institution   : University of Petroleum and Energy Studies (UPES), Dehradun
  * Student Name  : Mayur Saxena
  * SAP ID        : 590032873
- * Description   : Added CGPA calculation, year-wise average CGPA reporting,
- *                 and sorting by SAP ID and Name using Bubble Sort.
+ * Due Date      : 20 November 2026
+ *
+ * Description   : A comprehensive console-based, menu-driven C application for
+ *                 managing student academic records, computing semester-based
+ *                 CGPA, generating cohort-level year-wise averages, sorting
+ *                 records by SAP ID and Name, and providing rule-based
+ *                 personalized Academic Advisor recommendations.
+ * ============================================================================
  */
 
 #include <stdio.h>
@@ -14,7 +22,7 @@
 #define MAX_STUDENTS 100
 #define TOTAL_SEMESTERS 8
 
-/* Structure to store individual student details */
+/* Structure to store complete individual student details */
 struct Student {
     long int sap_id;
     char roll_no[20];
@@ -27,24 +35,26 @@ struct Student {
     float cgpa;
 };
 
-/* Global array of student records and counter */
+/* Global database array and record counter */
 struct Student students[MAX_STUDENTS];
 int student_count = 0;
 
-/* Function prototypes */
+/* Function Declarations */
 void calculateCGPA(struct Student *s);
 void calculateAllCGPA();
-void averageCGPAByYear();
-void displaySortedBySapId();
-void displaySortedByName();
 void loadSampleStudents();
 void addStudent();
-void searchStudent();
-void deleteStudent();
 void displayOneStudent(struct Student s);
 void displayAllStudents();
+void searchStudent();
+void averageCGPAByYear();
+void deleteStudent();
+void displaySortedBySapId();
+void displaySortedByName();
+void giveAcademicAdvice(struct Student s);
+void academicAdvisorMenu();
 
-/* Calculate CGPA of an individual student by averaging completed (> 0.0) SGPAs */
+/* Function to calculate CGPA of an individual student by averaging completed (> 0.0) SGPAs */
 void calculateCGPA(struct Student *s) {
     float sum = 0.0f;
     int completed_sems = 0;
@@ -64,7 +74,7 @@ void calculateCGPA(struct Student *s) {
     }
 }
 
-/* Recalculate and display CGPA summary table for all students */
+/* Function to recalculate and display CGPA summary table for all students */
 void calculateAllCGPA() {
     int i;
     if (student_count == 0) {
@@ -87,125 +97,11 @@ void calculateAllCGPA() {
     }
 }
 
-/* Calculate average CGPA of students belonging to each academic year */
-void averageCGPAByYear() {
-    int yr, i, count_in_year;
-    float sum_cgpa;
-
-    if (student_count == 0) {
-        printf("\nNo student records available.\n");
-        return;
-    }
-
-    printf("\n--- Year-wise Average CGPA Report ---\n");
-    for (yr = 1; yr <= 4; yr++) {
-        sum_cgpa = 0.0f;
-        count_in_year = 0;
-
-        for (i = 0; i < student_count; i++) {
-            if (students[i].year == yr) {
-                sum_cgpa += students[i].cgpa;
-                count_in_year++;
-            }
-        }
-
-        if (count_in_year > 0) {
-            printf("Year %d : %d student(s) | Average CGPA = %.2f\n",
-                   yr, count_in_year, sum_cgpa / count_in_year);
-        } else {
-            printf("Year %d : 0 students   | Average CGPA = N/A\n", yr);
-        }
-    }
-}
-
-/* Display all student records in increasing order of SAP ID using Bubble Sort */
-void displaySortedBySapId() {
-    struct Student temp_list[MAX_STUDENTS];
-    struct Student swap_temp;
-    int i, j;
-
-    if (student_count == 0) {
-        printf("\nNo student records to sort.\n");
-        return;
-    }
-
-    /* Copy into temporary array to keep original collection intact */
-    for (i = 0; i < student_count; i++) {
-        temp_list[i] = students[i];
-    }
-
-    /* Bubble Sort by SAP ID (Ascending) */
-    for (i = 0; i < student_count - 1; i++) {
-        for (j = 0; j < student_count - i - 1; j++) {
-            if (temp_list[j].sap_id > temp_list[j + 1].sap_id) {
-                swap_temp = temp_list[j];
-                temp_list[j] = temp_list[j + 1];
-                temp_list[j + 1] = swap_temp;
-            }
-        }
-    }
-
-    printf("\n--- Student Records in Increasing Order of SAP ID ---\n");
-    printf("%-12s %-14s %-22s %-6s %-6s %-8s\n",
-           "SAP ID", "Roll No.", "Name", "Year", "Sem", "CGPA");
-    printf("------------------------------------------------------------------------\n");
-    for (i = 0; i < student_count; i++) {
-        printf("%-12ld %-14s %-22s %-6d %-6d %-8.2f\n",
-               temp_list[i].sap_id,
-               temp_list[i].roll_no,
-               temp_list[i].name,
-               temp_list[i].year,
-               temp_list[i].semester,
-               temp_list[i].cgpa);
-    }
-}
-
-/* Display all student records in increasing alphabetical order of Name using Bubble Sort */
-void displaySortedByName() {
-    struct Student temp_list[MAX_STUDENTS];
-    struct Student swap_temp;
-    int i, j;
-
-    if (student_count == 0) {
-        printf("\nNo student records to sort.\n");
-        return;
-    }
-
-    for (i = 0; i < student_count; i++) {
-        temp_list[i] = students[i];
-    }
-
-    /* Bubble Sort by Name alphabetically (Ascending) */
-    for (i = 0; i < student_count - 1; i++) {
-        for (j = 0; j < student_count - i - 1; j++) {
-            if (strcmp(temp_list[j].name, temp_list[j + 1].name) > 0) {
-                swap_temp = temp_list[j];
-                temp_list[j] = temp_list[j + 1];
-                temp_list[j + 1] = swap_temp;
-            }
-        }
-    }
-
-    printf("\n--- Student Records in Increasing Order of Name ---\n");
-    printf("%-22s %-12s %-14s %-6s %-6s %-8s\n",
-           "Name", "SAP ID", "Roll No.", "Year", "Sem", "CGPA");
-    printf("------------------------------------------------------------------------\n");
-    for (i = 0; i < student_count; i++) {
-        printf("%-22s %-12ld %-14s %-6d %-6d %-8.2f\n",
-               temp_list[i].name,
-               temp_list[i].sap_id,
-               temp_list[i].roll_no,
-               temp_list[i].year,
-               temp_list[i].semester,
-               temp_list[i].cgpa);
-    }
-}
-
-/* Pre-load initial sample records */
+/* Pre-load 5 diverse student records representing all 4 academic years and performance tiers */
 void loadSampleStudents() {
     int i;
 
-    /* Student 1: 1st Year (Mayur Saxena) */
+    /* Student 1: 1st Year - Mayur Saxena (Excellent Performance tier) */
     students[0].sap_id = 590032873;
     strcpy(students[0].roll_no, "R214226001");
     strcpy(students[0].name, "Mayur Saxena");
@@ -217,7 +113,7 @@ void loadSampleStudents() {
     for (i = 0; i < 8; i++) students[0].sgpa[i] = s0[i];
     calculateCGPA(&students[0]);
 
-    /* Student 2: 2nd Year */
+    /* Student 2: 2nd Year - Priya Verma (Good Performance tier) */
     students[1].sap_id = 50010102;
     strcpy(students[1].roll_no, "R214225002");
     strcpy(students[1].name, "Priya Verma");
@@ -229,7 +125,7 @@ void loadSampleStudents() {
     for (i = 0; i < 8; i++) students[1].sgpa[i] = s1[i];
     calculateCGPA(&students[1]);
 
-    /* Student 3: 3rd Year */
+    /* Student 3: 3rd Year - Rohan Negi (Needs Improvement tier) */
     students[2].sap_id = 50010108;
     strcpy(students[2].roll_no, "R214224008");
     strcpy(students[2].name, "Rohan Negi");
@@ -241,7 +137,7 @@ void loadSampleStudents() {
     for (i = 0; i < 8; i++) students[2].sgpa[i] = s2[i];
     calculateCGPA(&students[2]);
 
-    /* Student 4: 2nd Year */
+    /* Student 4: 2nd Year - Karan Bisht (Requires Immediate Attention tier) */
     students[3].sap_id = 50010101;
     strcpy(students[3].roll_no, "R214225001");
     strcpy(students[3].name, "Karan Bisht");
@@ -253,7 +149,7 @@ void loadSampleStudents() {
     for (i = 0; i < 8; i++) students[3].sgpa[i] = s3[i];
     calculateCGPA(&students[3]);
 
-    /* Student 5: 4th Year */
+    /* Student 5: 4th Year - Neha Rawat (Excellent Performance tier) */
     students[4].sap_id = 50010104;
     strcpy(students[4].roll_no, "R214223004");
     strcpy(students[4].name, "Neha Rawat");
@@ -282,10 +178,10 @@ void addStudent() {
     printf("Enter SAP ID: ");
     scanf("%ld", &s.sap_id);
 
-    /* Check for duplicate SAP ID */
+    /* Validate duplicate SAP ID */
     for (i = 0; i < student_count; i++) {
         if (students[i].sap_id == s.sap_id) {
-            printf("[Error] Student with SAP ID %ld already exists in the system!\n", s.sap_id);
+            printf("[Error] A student with SAP ID %ld already exists in the database!\n", s.sap_id);
             return;
         }
     }
@@ -343,13 +239,29 @@ void displayOneStudent(struct Student s) {
     printf("\nCGPA      : %.2f\n", s.cgpa);
 }
 
+/* Function to display all student records */
+void displayAllStudents() {
+    int i;
+    if (student_count == 0) {
+        printf("\nNo student records found.\n");
+        return;
+    }
+
+    printf("\n================ ALL STUDENT RECORDS (Total: %d) ================\n", student_count);
+    for (i = 0; i < student_count; i++) {
+        printf("\n[Record #%d]\n", i + 1);
+        displayOneStudent(students[i]);
+    }
+    printf("=================================================================\n");
+}
+
 /* Function to search and display a student record by SAP ID */
 void searchStudent() {
     long int target_sap;
     int i, found = 0;
 
     if (student_count == 0) {
-        printf("\nNo student records available to search.\n");
+        printf("\nNo student records to search.\n");
         return;
     }
 
@@ -370,13 +282,44 @@ void searchStudent() {
     }
 }
 
+/* Function to calculate the average CGPA of students belonging to each academic year */
+void averageCGPAByYear() {
+    int yr, i, count_in_year;
+    float sum_cgpa;
+
+    if (student_count == 0) {
+        printf("\nNo student records available.\n");
+        return;
+    }
+
+    printf("\n--- Year-wise Average CGPA Report ---\n");
+    for (yr = 1; yr <= 4; yr++) {
+        sum_cgpa = 0.0f;
+        count_in_year = 0;
+
+        for (i = 0; i < student_count; i++) {
+            if (students[i].year == yr) {
+                sum_cgpa += students[i].cgpa;
+                count_in_year++;
+            }
+        }
+
+        if (count_in_year > 0) {
+            printf("Year %d : %d student(s) | Average CGPA = %.2f\n",
+                   yr, count_in_year, sum_cgpa / count_in_year);
+        } else {
+            printf("Year %d : 0 students   | Average CGPA = N/A\n", yr);
+        }
+    }
+}
+
 /* Function to delete an individual student record by SAP ID */
 void deleteStudent() {
     long int target_sap;
     int i, j, found_index = -1;
 
     if (student_count == 0) {
-        printf("\nNo student records available to delete.\n");
+        printf("\nNo student records to delete.\n");
         return;
     }
 
@@ -391,14 +334,14 @@ void deleteStudent() {
     }
 
     if (found_index == -1) {
-        printf("\n[Error] Student with SAP ID %ld not found. Deletion aborted.\n", target_sap);
+        printf("\n[Error] Student with SAP ID %ld not found. Deletion failed.\n", target_sap);
         return;
     }
 
     printf("\nDeleting record of '%s' (SAP ID: %ld)...\n",
            students[found_index].name, students[found_index].sap_id);
 
-    /* Shift subsequent records to fill deleted slot */
+    /* Shift remaining elements one position to the left */
     for (j = found_index; j < student_count - 1; j++) {
         students[j] = students[j + 1];
     }
@@ -407,24 +350,177 @@ void deleteStudent() {
     printf("[Success] Record deleted. Total students remaining: %d\n", student_count);
 }
 
-/* Function to display all student records */
-void displayAllStudents() {
-    int i;
+/* Function to display all student records in increasing order of SAP ID using Bubble Sort */
+void displaySortedBySapId() {
+    struct Student temp_list[MAX_STUDENTS];
+    struct Student swap_temp;
+    int i, j;
+
     if (student_count == 0) {
-        printf("\nNo student records available.\n");
+        printf("\nNo student records to sort.\n");
         return;
     }
 
-    printf("\n================ ALL STUDENT RECORDS (Total: %d) ================\n", student_count);
+    /* Copy records into temporary array to preserve original order */
     for (i = 0; i < student_count; i++) {
-        printf("\n[Record #%d]\n", i + 1);
-        displayOneStudent(students[i]);
+        temp_list[i] = students[i];
     }
-    printf("=================================================================\n");
+
+    /* Bubble Sort by SAP ID in ascending order */
+    for (i = 0; i < student_count - 1; i++) {
+        for (j = 0; j < student_count - i - 1; j++) {
+            if (temp_list[j].sap_id > temp_list[j + 1].sap_id) {
+                swap_temp = temp_list[j];
+                temp_list[j] = temp_list[j + 1];
+                temp_list[j + 1] = swap_temp;
+            }
+        }
+    }
+
+    printf("\n--- Student Records in Increasing Order of SAP ID ---\n");
+    printf("%-12s %-14s %-22s %-6s %-6s %-8s\n",
+           "SAP ID", "Roll No.", "Name", "Year", "Sem", "CGPA");
+    printf("------------------------------------------------------------------------\n");
+    for (i = 0; i < student_count; i++) {
+        printf("%-12ld %-14s %-22s %-6d %-6d %-8.2f\n",
+               temp_list[i].sap_id,
+               temp_list[i].roll_no,
+               temp_list[i].name,
+               temp_list[i].year,
+               temp_list[i].semester,
+               temp_list[i].cgpa);
+    }
+}
+
+/* Function to display all student records in increasing alphabetical order of Name */
+void displaySortedByName() {
+    struct Student temp_list[MAX_STUDENTS];
+    struct Student swap_temp;
+    int i, j;
+
+    if (student_count == 0) {
+        printf("\nNo student records to sort.\n");
+        return;
+    }
+
+    for (i = 0; i < student_count; i++) {
+        temp_list[i] = students[i];
+    }
+
+    /* Bubble Sort by Name alphabetically (Ascending) */
+    for (i = 0; i < student_count - 1; i++) {
+        for (j = 0; j < student_count - i - 1; j++) {
+            if (strcmp(temp_list[j].name, temp_list[j + 1].name) > 0) {
+                swap_temp = temp_list[j];
+                temp_list[j] = temp_list[j + 1];
+                temp_list[j + 1] = swap_temp;
+            }
+        }
+    }
+
+    printf("\n--- Student Records in Increasing Order of Name ---\n");
+    printf("%-22s %-12s %-14s %-6s %-6s %-8s\n",
+           "Name", "SAP ID", "Roll No.", "Year", "Sem", "CGPA");
+    printf("------------------------------------------------------------------------\n");
+    for (i = 0; i < student_count; i++) {
+        printf("%-22s %-12ld %-14s %-6d %-6d %-8.2f\n",
+               temp_list[i].name,
+               temp_list[i].sap_id,
+               temp_list[i].roll_no,
+               temp_list[i].year,
+               temp_list[i].semester,
+               temp_list[i].cgpa);
+    }
+}
+
+/*
+ * Part B: AI-Assisted Academic Advisor
+ * Evaluates CGPA against 4 AI-designed performance tiers and suggests actionable study plans.
+ */
+void giveAcademicAdvice(struct Student s) {
+    int i, lowest_sem = -1;
+    float lowest_sgpa = 10.0f;
+
+    /* Detect completed semester with lowest SGPA for tailored diagnostic */
+    for (i = 0; i < TOTAL_SEMESTERS; i++) {
+        if (s.sgpa[i] > 0.0f && s.sgpa[i] < lowest_sgpa) {
+            lowest_sgpa = s.sgpa[i];
+            lowest_sem = i + 1;
+        }
+    }
+
+    printf("\n------------------------------------------------------------\n");
+    printf("Student : %s (SAP ID: %ld | Year: %d | CGPA: %.2f)\n",
+           s.name, s.sap_id, s.year, s.cgpa);
+
+    if (s.cgpa >= 8.5f) {
+        printf("Category: Excellent Performance\n");
+        printf("Advice  : Excellent performance - maintain your current study pattern\n");
+        printf("          and explore competitive coding, internships, or mini-projects.\n");
+    } else if (s.cgpa >= 7.0f) {
+        printf("Category: Good Performance\n");
+        printf("Advice  : Good performance - stay consistent with lecture notes and\n");
+        printf("          revise core subjects to push your CGPA above 8.5.\n");
+    } else if (s.cgpa >= 5.5f) {
+        printf("Category: Needs Improvement\n");
+        printf("Advice  : Needs improvement - focus more on subjects with lower SGPA\n");
+        printf("          and solve extra practice problems before mid-sem/end-sem exams.\n");
+    } else {
+        printf("Category: Requires Immediate Attention\n");
+        printf("Advice  : Requires immediate attention - meet your faculty advisor,\n");
+        printf("          attend remedial doubt sessions, and clear core fundamentals.\n");
+    }
+
+    if (lowest_sem != -1) {
+        printf("Note    : Lowest recorded SGPA is %.2f in Semester %d.\n",
+               lowest_sgpa, lowest_sem);
+    }
+}
+
+/* Menu wrapper for the AI-Assisted Academic Advisor */
+void academicAdvisorMenu() {
+    int sub_choice, i, found = 0;
+    long int target_sap;
+
+    if (student_count == 0) {
+        printf("\nNo student records available for academic advice.\n");
+        return;
+    }
+
+    printf("\n--- AI-Assisted Academic Advisor ---\n");
+    printf("1. Get Academic Advice for a Specific Student (by SAP ID)\n");
+    printf("2. Generate Academic Advice Report for All Students\n");
+    printf("Enter choice (1 or 2): ");
+    scanf("%d", &sub_choice);
+
+    if (sub_choice == 1) {
+        printf("Enter SAP ID: ");
+        scanf("%ld", &target_sap);
+        for (i = 0; i < student_count; i++) {
+            if (students[i].sap_id == target_sap) {
+                giveAcademicAdvice(students[i]);
+                printf("------------------------------------------------------------\n");
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            printf("\n[Notice] Student with SAP ID %ld was not found.\n", target_sap);
+        }
+    } else if (sub_choice == 2) {
+        for (i = 0; i < student_count; i++) {
+            giveAcademicAdvice(students[i]);
+        }
+        printf("------------------------------------------------------------\n");
+    } else {
+        printf("\nInvalid option selected.\n");
+    }
 }
 
 int main() {
     int choice;
+
+    /* Pre-load 5 student records */
     loadSampleStudents();
 
     printf("=================================================================\n");
@@ -443,12 +539,14 @@ int main() {
         printf("6. Delete an Individual Student Record\n");
         printf("7. Display All Records in Increasing Order of SAP ID\n");
         printf("8. Display All Records in Increasing Order of Name\n");
-        printf("9. AI-Assisted Academic Advisor (Pending implementation)\n");
+        printf("9. AI-Assisted Academic Advisor\n");
         printf("0. Exit\n");
         printf("-------------------------------------------------------------\n");
         printf("Enter your choice: ");
 
-        if (scanf("%d", &choice) != 1) break;
+        if (scanf("%d", &choice) != 1) {
+            break;
+        }
 
         switch (choice) {
             case 1:
@@ -475,11 +573,14 @@ int main() {
             case 8:
                 displaySortedByName();
                 break;
+            case 9:
+                academicAdvisorMenu();
+                break;
             case 0:
-                printf("\nExiting application. Goodbye!\n");
+                printf("\nExiting program. Thank you!\n");
                 break;
             default:
-                printf("\nFeature under development or invalid choice.\n");
+                printf("\nInvalid choice! Please select an option from 0 to 9.\n");
         }
     } while (choice != 0);
 
