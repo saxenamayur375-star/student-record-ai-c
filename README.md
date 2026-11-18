@@ -14,12 +14,12 @@ A console-based, menu-driven Student Record and Result Management System built p
 ## 🚀 Status
 - [x] Initial C Program Structure & Data Models
 - [x] Student Record Functions (Add with validation, Search by SAP ID, Delete with array shift, Formatted Display)
-- [ ] CGPA Calculation & Year-wise Average Reporting
-- [ ] Sorting Algorithms (SAP ID & Alphabetical Name)
+- [x] CGPA Calculation & Year-wise Average Reporting
+- [x] Sorting Algorithms (SAP ID & Alphabetical Name using Bubble Sort)
 - [ ] AI-Assisted Academic Advisor
 
 ## 🛠 Features Implemented in this Phase
-- **Add Student**: Input validation for duplicate SAP ID checks, semester bounds, and SGPA arrays.
-- **Search Student**: Linear search by SAP ID returning complete formatted academic profile.
-- **Delete Student**: Deletion with sequential index shifting preserving memory integrity.
-- **Display Records**: Detailed breakdown of every student including roll number, contact info, and semester-wise SGPA.
+- **CGPA Calculation**: Computes individual cumulative GPA by averaging valid, non-zero semester SGPAs.
+- **Year-wise Average CGPA**: Aggregates and reports cohort-level performance across Year 1, Year 2, Year 3, and Year 4.
+- **Sort by SAP ID**: Bubble sort sorting student records in ascending numeric order of SAP ID.
+- **Sort by Name**: Alphabetical ascending bubble sort using `strcmp` on student names.
